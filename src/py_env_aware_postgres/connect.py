@@ -33,7 +33,7 @@ def params(**kwargs):
     :return dict
     """
     config = get_config()
-    p = dict()
+    p = {}
     if config.has('postgres.username'):
         p["user"] = config.get('postgres.username')
 

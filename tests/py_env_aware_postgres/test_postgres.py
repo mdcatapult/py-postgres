@@ -1,3 +1,17 @@
+# copyright 2022 Medicines Discovery Catapult
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 from mock import mock
 import argparse
@@ -20,7 +34,7 @@ dummyConfig = {
 class TestPostgres(object):
 
     def test_params(self):
-        from src.klein_postgres.connect import params
+        from src.py_env_aware_postgres.connect import params
         p = params()
         assert p == dict(
             database="test", 
@@ -31,7 +45,7 @@ class TestPostgres(object):
         )  
 
     def test_params_with_custom_values(self):
-        from src.klein_postgres.connect import params
+        from src.py_env_aware_postgres.connect import params
         tmp_params = dict(
             database="tmp_db", 
             user="tmp_username",
@@ -43,17 +57,17 @@ class TestPostgres(object):
         assert p == tmp_params
 
     def test_connect_with_no_params(self):
-        from src.klein_postgres.postgres import connect
+        from src.py_env_aware_postgres.postgres import connect
         connect()
 
     def test_connect_with_custom_params(self):
-        from src.klein_postgres.postgres import connect
+        from src.py_env_aware_postgres.postgres import connect
         connect(database="postgres")
         
     @mock.patch('argparse.ArgumentParser.parse_known_args',return_value=(argparse.Namespace(debug=True, config=None, common=None), argparse.Namespace()))
     def test_connect_with_logging_connection(self, args, caplog):
         caplog.set_level(logging.DEBUG)
-        from src.klein_postgres.postgres import connect
+        from src.py_env_aware_postgres.postgres import connect
         conn = connect()
         query = b"CREATE TABLE loggingTest (id serial primary key);"
         conn.cursor().execute(query)

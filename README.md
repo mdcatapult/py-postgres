@@ -1,4 +1,4 @@
-# Klein Postgres
+# Py-Env-Aware Postgres
 
 Simple module to allow connection to postgres
 

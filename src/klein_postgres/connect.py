@@ -1,5 +1,6 @@
 import argparse
 import logging
+from typing import Dict
 
 import psycopg2
 from psycopg2.extras import LoggingConnection
@@ -9,15 +10,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="enable debug", action="store_true")
 
 
-def params(**kwargs):
+def params(config_path: str = 'postgres', **kwargs) -> Dict:
     """
     generate a dict of connection based on those provided by klein_config
-    :param config: config imported from klein_config
+    :param config_path: the path to the postgres config in the config
     :param kwargs: expanded keyword arguments to build a connection with
     :return dict
     """
     config = get_config()
-    p = dict()
+    p = {}
+
     if config.has('postgres.username'):
         p["user"] = config.get('postgres.username')
 
@@ -33,9 +35,7 @@ def params(**kwargs):
     if config.has('postgres.port'):
         p["port"] = config.get('postgres.port', "5432")
 
-    for key, value in kwargs.items():
-        p[key] = value
-
+    p.update(kwargs)
     return p
 
 
@@ -46,30 +46,32 @@ class PostgresConnection:
         args, _ = parser.parse_known_args()
         self.debug = args
 
-    def refresh(self, **kwargs):
+    def refresh(self, config_path: str = 'postgres', **kwargs):
         """
         refresh the connection
-        :param config: dict of parameters to refresh the connection with (optional)
+        :param config_path: the path to the postgres config in the config
+        :param **kwargs: parameters to refresh the connection with (optional)
         :return psycopg.connection
         """
         if self.connection:
             self.connection.close()
-        return self.connect(**kwargs)
+        return self.connect(config_path, **kwargs)
 
-    def connect(self, **kwargs):
+    def connect(self, config_path: str = 'postgres', **kwargs):
         """
         connect to database
-        :param config: dict of parameters to refresh the connection with (optional)
+        :param config_path: the path to the postgres config in the config
+        :param **kwargs: parameters to refresh the connection with (optional)
         :return psycopg.connection
         """
-
-        if not kwargs:
-            kwargs = {}
 
         p = params(**kwargs)
 
         if not p:
             return None
+
+        readonly = p.pop('readonly', True)
+        autocommit = p.pop('autocommit', readonly)
 
         if self.debug:
             logging.basicConfig(level=logging.DEBUG)
@@ -79,6 +81,9 @@ class PostgresConnection:
             conn.initialize(logger)
         else:
             conn = psycopg2.connect(**p)
+
+        conn.set_session(readonly=readonly,
+                         autocommit=autocommit)
 
         return conn
 

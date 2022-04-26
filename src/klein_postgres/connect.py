@@ -20,20 +20,23 @@ def params(config_path: str = 'postgres', **kwargs) -> Dict:
     config = get_config()
     p = {}
 
-    if config.has('postgres.username'):
-        p["user"] = config.get('postgres.username')
+    if config.has(f'{config_path}.username'):
+        p["user"] = config.get(f'{config_path}.username')
 
-    if config.has('postgres.password'):
-        p["password"] = config.get('postgres.password')
+    if config.has(f'{config_path}.password'):
+        p["password"] = config.get(f'{config_path}.password')
 
-    if config.has('postgres.database'):
-        p["database"] = config.get('postgres.database')
+    if config.has(f'{config_path}.database'):
+        p["database"] = config.get(f'{config_path}.database')
 
-    if config.has('postgres.host'):
-        p["host"] = config.get('postgres.host', "127.0.0.1")
+    if config.has(f'{config_path}.host'):
+        p["host"] = config.get(f'{config_path}.host', "127.0.0.1")
 
-    if config.has('postgres.port'):
-        p["port"] = config.get('postgres.port', "5432")
+    if config.has(f'{config_path}.port'):
+        p["port"] = config.get(f'{config_path}.port', "5432")
+
+    p["readonly"] = bool(config.get(f'{config_path}.readonly', True))
+    p["autocommit"] = bool(config.get(f'{config_path}.autocommit', p["readonly"]))
 
     p.update(kwargs)
     return p
@@ -65,7 +68,7 @@ class PostgresConnection:
         :return psycopg.connection
         """
 
-        p = params(**kwargs)
+        p = params(config_path, **kwargs)
 
         if not p:
             return None

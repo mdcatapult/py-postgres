@@ -1,7 +1,9 @@
-import os
-from mock import mock
 import argparse
 import logging
+import os
+import unittest
+
+from mock import mock
 
 host = os.environ.get('POSTGRES_HOST')
 if host is None:
@@ -29,12 +31,28 @@ class TestPostgres(object):
         from src.klein_postgres.connect import params
         p = params()
         assert p == dict(
-            database="test", 
+            database="test",
             user="postgres",
             password="postgres",
             host=host,
             port=5432,
+            readonly=True,
+            autocommit=True,
         )
+
+    def test_params_with_readonly_set(self):
+        from src.klein_postgres.connect import params
+        p = params('readwrite')
+        assert p == dict(
+            database="test",
+            user="postgres",
+            password="postgres",
+            host=host,
+            port=5432,
+            readonly=False,
+            autocommit=False,
+        )
+
 
     def test_params_with_custom_values(self):
         from src.klein_postgres.connect import params
@@ -43,7 +61,9 @@ class TestPostgres(object):
             user="tmp_username",
             password="tmp_password",
             host="tmp_host",
-            port="tmp_port"
+            port="tmp_port",
+            readonly=True,
+            autocommit=True,
         )
         p = params(**tmp_params)
         assert p == tmp_params
@@ -72,7 +92,10 @@ class TestPostgres(object):
         from src.klein_postgres.postgres import connect
         conn = connect()
         query = b"CREATE TABLE loggingTest (id serial primary key);"
-        conn.cursor().execute(query)
-        conn.commit()
-        msg = caplog.records[0].msg
-        assert (query == msg)
+        try:
+            conn.cursor().execute(query)
+            conn.commit()
+            # an exception should have been raised for attempting a write operation
+            assert False
+        except Exception:
+            pass

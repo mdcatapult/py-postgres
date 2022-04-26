@@ -45,7 +45,7 @@ def params(config_path: str = 'postgres', **kwargs) -> Dict:
 class PostgresConnection:
 
     def __init__(self):
-        self.connection = None
+        self.connections = {}
         args, _ = parser.parse_known_args()
         self.debug = args
 
@@ -56,8 +56,8 @@ class PostgresConnection:
         :param **kwargs: parameters to refresh the connection with (optional)
         :return psycopg.connection
         """
-        if self.connection:
-            self.connection.close()
+        if config_path in self.connections:
+            self.connections[config_path].close()
         return self.connect(config_path, **kwargs)
 
     def connect(self, config_path: str = 'postgres', **kwargs):

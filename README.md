@@ -2,6 +2,31 @@
 
 Simple module to allow connection to postgres
 
+## Example
+
+config.yaml
+
+``` yaml
+postgres:
+    username: postgres_username
+    password: postgres_password
+    database: database_name
+    host: 127.0.0.1
+    port: 5432
+    readonly: True  # Default to True, set to False if write operation is required
+    autocommit: True  # Default to be the same as readonly. If set to false, you are expected to commit after the queries manually.
+```
+
+python
+
+``` python
+from klein_postgres.connect import connect
+
+connection = connect()  # or
+connection = connect('postgres')  # same as in the config. You may specify multiple postgres db in the config
+```
+
+
 ## Development
 
 

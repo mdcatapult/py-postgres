@@ -1,6 +1,6 @@
 # Klein Postgres
 
-Simple module to allow connection to postgres
+Simple module to enable postgres database connections with details specified in yaml based config file.
 
 ## Example
 
@@ -25,7 +25,19 @@ from klein_postgres.connect import connect
 connection = connect()  # or
 connection = connect('postgres')  # same as in the config. You may specify multiple postgres db in the config
 ```
+In the above example the `postgres` parameter matches the key in the config that the database details should be read from.
+If you wanted multiple db connections then you would specify multiple db connection sections in the config:
 
+```yaml
+firstdb:
+    username: firstdb_username
+    password: firstdb_password
+    database: firstdb_name
+seconddb:
+    username: seconddb_username
+    password: seconddb_password
+    database: seconddb_name
+```
 
 ## Development
 

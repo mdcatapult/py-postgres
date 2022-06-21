@@ -72,3 +72,6 @@ python -m pytest --cov-report term --cov src/ tests/
 
 ### Anything else?
 Why Klein? It's probably one of [these](https://en.wikipedia.org/wiki/Klein_bottle). Possibly a statement on the tangled web of support libraries.
+
+## License
+This project is licensed under the terms of the Apache 2 license, which can be found in the repository as `LICENSE.txt`

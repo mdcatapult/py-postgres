@@ -28,6 +28,8 @@ connection = connect('postgres')  # same as in the config. You may specify multi
 In the above example the `postgres` parameter matches the key in the config that the database details should be read from.
 If you wanted multiple db connections then you would specify multiple db connection sections in the config:
 
+**N.B. if you do not have working connection details under the `postgres` config key you will encounter a runtime failure.**
+
 ```yaml
 firstdb:
     username: firstdb_username

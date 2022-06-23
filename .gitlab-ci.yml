@@ -6,7 +6,7 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   POSTGRES_DB: test
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: password
+  POSTGRES_PASSWORD: postgres
 
 cache:
   paths:

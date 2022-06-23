@@ -1,6 +1,6 @@
 # Klein Postgres
 
-Simple module to allow connection to postgres
+Simple module to enable postgres database connections with details specified in yaml based config file.
 
 ## Example
 
@@ -25,7 +25,21 @@ from klein_postgres.connect import connect
 connection = connect()  # or
 connection = connect('postgres')  # same as in the config. You may specify multiple postgres db in the config
 ```
+In the above example the `postgres` parameter matches the key in the config that the database details should be read from.
+If you wanted multiple db connections then you would specify multiple db connection sections in the config:
 
+**N.B. if you do not have working connection details under the `postgres` config key you will encounter a runtime failure.**
+
+```yaml
+firstdb:
+    username: firstdb_username
+    password: firstdb_password
+    database: firstdb_name
+seconddb:
+    username: seconddb_username
+    password: seconddb_password
+    database: seconddb_name
+```
 
 ## Development
 
@@ -57,3 +71,9 @@ For test coverage you can run:
 docker-compose up
 python -m pytest --cov-report term --cov src/ tests/
 ```
+
+### Anything else?
+Why Klein? It's probably one of [these](https://en.wikipedia.org/wiki/Klein_bottle). Possibly a statement on the tangled web of support libraries.
+
+## License
+This project is licensed under the terms of the Apache 2 license, which can be found in the repository as `LICENSE.txt`
